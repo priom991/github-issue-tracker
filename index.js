@@ -1,18 +1,16 @@
-const API_URL = "https://phi-lab-server.vercel.app/api/v1/lab/issues"
+const API = "https://phi-lab-server.vercel.app/api/v1/lab/issues"
 
 let issues = []
 
-const container = document.getElementById("issuesContainer")
+const issuesDiv = document.getElementById("issues")
 const spinner = document.getElementById("spinner")
-const issueCount = document.getElementById("issueCount")
-
-/* LOAD ISSUES */
+const count = document.getElementById("count")
 
 async function loadIssues(){
 
 spinner.style.display="block"
 
-let res = await fetch(API_URL)
+let res = await fetch(API)
 let data = await res.json()
 
 issues = data.data
@@ -26,63 +24,60 @@ displayIssues(issues)
 loadIssues()
 
 
-/* DISPLAY ISSUES */
-
 function displayIssues(list){
 
-container.innerHTML=""
+issuesDiv.innerHTML=""
 
-issueCount.innerText = list.length + " Issues"
+count.innerText = list.length + " Issues"
 
-list.forEach(issue => {
+list.forEach(issue=>{
 
-let card = document.createElement("div")
+let card=document.createElement("div")
 
-card.className = `issue-card ${issue.status}`
+card.className=`card ${issue.status}`
 
-card.innerHTML = `
-<h3>${issue.title}</h3>
-<p>${issue.description}</p>
-<p><b>Status:</b> ${issue.status}</p>
-<p><b>Author:</b> ${issue.author}</p>
-<p><b>Priority:</b> ${issue.priority}</p>
-<p><b>Label:</b> ${issue.label}</p>
-<p><b>Created:</b> ${issue.createdAt}</p>
+card.innerHTML=`
+
+<span class="priority ${issue.priority.toLowerCase()}">
+${issue.priority}
+</span>
+
+<h4>${issue.title}</h4>
+
+<p class="desc">${issue.description}</p>
+
+<div class="labels">
+<span class="bug">${issue.label}</span>
+</div>
+
+<div class="meta">
+#${issue.id} by ${issue.author}<br>
+${issue.createdAt}
+</div>
 `
 
-card.onclick = () => openIssue(issue.id)
+card.onclick=()=>openIssue(issue.id)
 
-container.appendChild(card)
+issuesDiv.appendChild(card)
 
 })
 
 }
 
 
-/* FILTER */
+function filterIssues(type,el){
 
-function filterIssues(type,element){
-
-document.querySelectorAll(".tab").forEach(tab=>tab.classList.remove("active"))
-
-element.classList.add("active")
+document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"))
+el.classList.add("active")
 
 if(type==="all"){
-
 displayIssues(issues)
-
 }else{
-
-let filtered = issues.filter(issue=>issue.status===type)
-
-displayIssues(filtered)
-
+displayIssues(issues.filter(i=>i.status===type))
 }
 
 }
 
-
-/* MODAL */
 
 async function openIssue(id){
 
@@ -129,9 +124,11 @@ document.getElementById("issueModal").style.display = "none"
 
 /* SEARCH */
 
-async function searchIssue(){
+document.getElementById("searchInput").addEventListener("keyup", async e=>{
 
-let q = document.getElementById("searchInput").value
+let q=e.target.value
+
+if(q.length<2)return loadIssues()
 
 spinner.style.display="block"
 
@@ -143,4 +140,4 @@ spinner.style.display="none"
 
 displayIssues(data.data)
 
-}
+})
