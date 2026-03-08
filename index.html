@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GitHub Issues Tracker</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial, Helvetica, sans-serif;
+}
+
+body{
+background:#f3f4f6;
+}
+
+/* NAVBAR */
+
+.navbar{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:15px 40px;
+background:#ffffff;
+color:#1f2937;
+}
+
+#nav-img{
+    width: 36px;
+    height: 36px;
+}
+
+.logo{
+font-size:20px;
+font-weight:600;
+display: flex;
+/* justify-content: center; */
+align-items: center;
+gap: 8px;
+}
+
+.search-box{
+display:flex;
+gap:10px;
+}
+
+.search-box input{
+padding:8px;
+border-radius:5px;
+border:none;
+}
+
+.search-box button{
+padding:8px 15px;
+background:#4a00ff;
+border:none;
+color:white;
+border-radius:5px;
+cursor:pointer;
+}
+
+/* TABS */
+
+.tabs{
+display:flex;
+gap:20px;
+padding:20px 40px;
+}
+
+.tab{
+cursor:pointer;
+padding:8px 15px;
+border-radius:5px;
+background:#e5e7eb;
+}
+
+.tab.active{
+background:#4a00ff;
+color:white;
+}
+
+/* INFO SECTION */
+
+.info-bar{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:0 40px 20px 40px;
+}
+
+.issue-count{
+font-size:18px;
+font-weight:600;
+}
+
+/* GRID */
+
+.issues-container{
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:20px;
+padding:0 40px 40px 40px;
+}
+
+/* CARD */
+
+.issue-card{
+background:white;
+padding:15px;
+border-radius:8px;
+cursor:pointer;
+box-shadow:0 4px 10px rgba(0,0,0,0.1);
+border-top:5px solid transparent;
+}
+
+.issue-card.open{
+border-top-color:green;
+}
+
+.issue-card.closed{
+border-top-color:purple;
+}
+
+.issue-card h3{
+margin-bottom:10px;
+font-size:16px;
+}
+
+.issue-card p{
+font-size:13px;
+margin-bottom:5px;
+}
+
+/* MODAL */
+
+.modal{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.4);
+display:none;
+justify-content:center;
+align-items:center;
+}
+
+.modal-content{
+background:white;
+width:600px;
+padding:30px;
+border-radius:12px;
+}
+
+.meta-line{
+margin:10px 0;
+color:#6b7280;
+display:flex;
+gap:10px;
+align-items:center;
+}
+
+.status-badge{
+background:#16a34a;
+color:white;
+padding:5px 12px;
+border-radius:15px;
+font-size:12px;
+}
+
+.labels{
+margin:15px 0;
+}
+
+.labels span{
+padding:4px 10px;
+border-radius:12px;
+font-size:12px;
+margin-right:8px;
+}
+
+.bug{
+background:#fee2e2;
+color:#dc2626;
+}
+
+.help{
+background:#fef3c7;
+color:#d97706;
+}
+
+.issue-desc{
+margin:15px 0;
+color:#555;
+}
+
+.details-box{
+display:flex;
+justify-content:space-between;
+background:#f3f4f6;
+padding:15px;
+border-radius:8px;
+margin-top:10px;
+}
+
+.label-title{
+color:#777;
+font-size:13px;
+}
+
+.priority-badge{
+background:#ef4444;
+color:white;
+padding:5px 10px;
+border-radius:15px;
+font-size:12px;
+}
+
+.modal-footer{
+margin-top:20px;
+text-align:right;
+}
+
+.modal-footer button{
+background:#6d28d9;
+color:white;
+border:none;
+padding:10px 20px;
+border-radius:6px;
+cursor:pointer;
+}
+
+/* LOADING */
+
+.spinner{
+text-align:center;
+padding:40px;
+font-size:20px;
+display:none;
+}
+
+/* RESPONSIVE */
+
+@media(max-width:1000px){
+
+.issues-container{
+grid-template-columns:repeat(2,1fr);
+}
+
+}
+
+@media(max-width:600px){
+
+.navbar{
+flex-direction:column;
+gap:10px;
+}
+
+.issues-container{
+grid-template-columns:1fr;
+}
+
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+
+<div class="navbar">
+<div class="logo">
+    <img id="nav-img" src="assets/github-logo.png" alt="" srcset="">
+   <span> GitHub Issues Tracker</span>
+</div>
+
+<div class="search-box">
+<input type="text" id="searchInput" placeholder="Search issues">
+<button onclick="searchIssue()"><i class="fa-solid fa-plus"></i>New Issue</button>
+</div>
+</div>
+
+<!-- TABS -->
+
+<div class="tabs">
+<div class="tab active" onclick="filterIssues('all',this)">All</div>
+<div class="tab" onclick="filterIssues('open',this)">Open</div>
+<div class="tab" onclick="filterIssues('closed',this)">Closed</div>
+</div>
+
+<!-- INFO -->
+
+<div class="info-bar">
+<div class="issue-count" id="issueCount">0 Issues</div>
+</div>
+
+<!-- LOADING -->
+
+<div class="spinner" id="spinner">Loading Issues...</div>
+
+<!-- ISSUE GRID -->
+
+<div class="issues-container" id="issuesContainer"></div>
+
+<!-- MODAL -->
+
+<div class="modal" id="issueModal">
+
+<div class="modal-content">
+
+<h2 id="issueTitle"></h2>
+
+<div class="meta-line">
+<span class="status-badge" id="issueStatus"></span>
+<span id="issueAuthor"></span>
+<span id="issueDate"></span>
+</div>
+
+<div class="labels" id="issueLabels"></div>
+
+<p class="issue-desc" id="issueDescription"></p>
+
+<div class="details-box">
+
+<div>
+<p class="label-title">Assignee:</p>
+<p id="issueAssignee"></p>
+</div>
+
+<div>
+<p class="label-title">Priority:</p>
+<span class="priority-badge" id="issuePriority"></span>
+</div>
+
+</div>
+
+<div class="modal-footer">
+<button onclick="closeModal()">Close</button>
+</div>
+
+</div>
+
+</div>
+
+<script src="index.js"></script>
+
+</body>
+</html>
