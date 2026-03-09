@@ -35,6 +35,7 @@ list.forEach(issue=>{
 let card=document.createElement("div")
 
 card.className=`card ${issue.status}`
+//..........................
 
 card.innerHTML=`
 
@@ -50,11 +51,17 @@ ${issue.priority}
 <span class="bug">${issue.label}</span>
 </div>
 
+<div class="issue-buttons">
+<button class="bug-btn">Bug</button>
+<button class="help-btn">Help Wanted</button>
+</div>
+
 <div class="meta">
 #${issue.id} by ${issue.author}<br>
 ${issue.createdAt}
 </div>
 `
+//..................................
 
 card.onclick=()=>openIssue(issue.id)
 
