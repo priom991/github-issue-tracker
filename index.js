@@ -122,7 +122,7 @@ document.getElementById("issueModal").style.display = "none"
 }
 
 
-/* SEARCH */
+/* search */
 
 document.getElementById("searchInput").addEventListener("keyup", async e=>{
 
