@@ -331,6 +331,28 @@ padding:20px;
 display:none;
 }
 
+/* ............... */
+.spinner{
+display:none;
+justify-content:center;
+align-items:center;
+padding:40px;
+}
+
+.loader{
+width:40px;
+height:40px;
+border:4px solid #e5e7eb;
+border-top:4px solid #6d28d9;
+border-radius:50%;
+animation:spin 1s linear infinite;
+}
+
+@keyframes spin{
+0%{transform:rotate(0deg);}
+100%{transform:rotate(360deg);}
+}
+
 /* responsive */
 
 @media(max-width:1000px){
@@ -401,7 +423,9 @@ GitHub Issues Tracker
 
 </div>
 
-<div class="spinner" id="spinner">Loading Issues...</div>
+<div class="spinner" id="spinner">
+<div class="loader"></div>
+</div>
 
 <div class="issues" id="issues"></div>
 
